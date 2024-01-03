@@ -1,0 +1,1 @@
+example for writing files, in this case a text file
