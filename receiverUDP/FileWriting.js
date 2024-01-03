@@ -1,11 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 
-const WriteTXT = async (CompleteBff) => {
+const WriteFile = async (FileBff, namefile) => {
 
-	const filePath = path.join(__dirname + '/../samples/logs.txt');
+	const filePath = path.join(__dirname + '/../samples/' + namefile);
 
-	fs.writeFile(filePath, CompleteBff, (err) => {
+	fs.writeFile(filePath, FileBff, (err) => {
   		if (err) {
     		console.error('Error writing file:', err);
   		} else {
@@ -15,36 +15,14 @@ const WriteTXT = async (CompleteBff) => {
 
 }
 
-const WriteFS = async () => {
 
+const WriteStreamingFile = async (BUFFER, namefile) => {
 
+	WriteFile(BUFFER, namefile);
 
-}
-
-const WriteM3U8 = async () => {
-
-}
-
-const WriteStreamingFiles = async (BUFFER, typefile) => {
-
-	if(typefile == 'txt'){
-
-		WriteTXT(BUFFER);
-
-	} else if (typefile == 'fs'){
-
-		WriteFS(BUFFER);
-
-	} else if (typefile == 'm3u8'){
-
-		WriteM3U8(BUFFER);
-
-	} else {
-
-	}
 }
 
 
 module.exports = {
-	WriteStreamingFiles,
+	WriteStreamingFile,
 }
