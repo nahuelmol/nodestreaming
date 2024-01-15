@@ -1,25 +1,32 @@
 const fs = require('fs')
 const path = require('path')
 
-const WriteFile = async (FileBff, namefile) => {
+
+
+const WriteFile = async (Bff, namefile) => {
 
 	const filePath = path.join(__dirname + '/../samples/' + namefile);
 
-	fs.writeFile(filePath, FileBff, (err) => {
-  		if (err) {
-    		console.error('Error writing file:', err);
-  		} else {
-    		console.log('File written successfully!');
-  		}
-	});
+	if(namefile.includes('m3u8')){
+		console.log('Content of m3u8:')
+		console.log(Bff)
+
+	} else {
+		fs.writeFile(filePath, Bff, (err) => {
+  			if (err) {
+    			console.error('Error writing file:', err);
+	  		} else {
+    			console.log(namefile + ' written successfully!');
+  			}
+		});
+	}
+	
 
 }
 
+const WriteStreamingFile = async (Bffcompleto, filename) => {
 
-const WriteStreamingFile = async (BUFFER, namefile) => {
-
-	WriteFile(BUFFER, namefile);
-
+	WriteFile(Bffcompleto, filename);
 }
 
 

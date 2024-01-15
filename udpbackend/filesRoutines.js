@@ -1,4 +1,5 @@
 const path = require('path');
+
 const fs = require('fs');
 const FSpromise = require('fs').promises;
 const server = require('./udpserver.js')
@@ -71,55 +72,58 @@ async function SendFiles (DIR_PATH, aimed_files) {
 
     if (err) { return console.log('Error reading directory')};
 
+    const HandlerMSG = (err) => {
+      if (err) throw err;
+    }
+
+    let filecounter = 0
+
     files.forEach(file => {
+
+
       filepath = DIR_PATH + '\\\\' + file
 
+
       if(filepath.includes('.ts') || filepath.includes('.m3u8')){
+
         const fileBuffer = fs.readFileSync(filepath);
-        const packetSize = 1500;
+        const FileNameBuffer = Buffer.from(file, 'utf-8');
 
+        const MTU = 1500;
+        const packetDataSize = MTU - (FileNameBuffer.length + 4);
 
-        message = 'startfile----' + file + ' fileBuffer -> ' + fileBuffer.length
-        bmessage = Buffer.from(message)
-
-        server.send(bmessage, 0, bmessage.length, HTTP_UDP_PORT, HTTP_UDP_HOST, (err) => {
-            if (err) throw err;
-        });
-
-        let buffer_counter = 0 
-
+        let buffer_counter = 0;
         //then fileBuffer is divided in 1500, to know how many buffers represent that file
         //instead of ding the division, we go through fileBuffer each 1500, it's sampling
-        for (let i = 0; i < fileBuffer.length; i += packetSize) {
+        for (let i = 0; i < fileBuffer.length; i += packetDataSize) {
 
-          //inside we take the fragment and it's sended 
-          const packet = fileBuffer.slice(i, i + packetSize);
-          server.send(packet, 0, packet.length, HTTP_UDP_PORT, HTTP_UDP_HOST, (err) => {
-            if (err) throw err;
-          });
+          var IdentifierBuffer = Buffer.alloc(2);
+          IdentifierBuffer.writeUInt16BE(buffer_counter);
+
+          var FilenamesizeBuffer = Buffer.alloc(2);
+          FilenamesizeBuffer.writeUInt16BE(FileNameBuffer.length)
+
+          if(fileBuffer.length < packetDataSize){
+
+            const packet = Buffer.concat([IdentifierBuffer, FilenamesizeBuffer, FileNameBuffer, fileBuffer]);
+            server.send(packet, 0, packet.length, HTTP_UDP_PORT, HTTP_UDP_HOST, HandlerMSG);
+
+          }else{
+            const packetdata = fileBuffer.slice(i, i + packetDataSize);
+            const packet = Buffer.concat([IdentifierBuffer, FilenamesizeBuffer, FileNameBuffer, packetdata]);
+
+            server.send(packet, 0, packet.length, HTTP_UDP_PORT, HTTP_UDP_HOST, HandlerMSG);
+          }
+          
 
           buffer_counter++;
         }
-
-        if(file.includes('.m3u8')){
-          console.log('file:', file, '->fileBuffer:', fileBuffer.length, '-> MANIFEST')
-          
-        } else {
-          console.log('file:', file, '->fileBuffer:', fileBuffer.length, '-> Buffers: '
-            + buffer_counter)
-        }
-
-
-        message = 'endfile----' + file + ' buffers -> ' + buffer_counter
-        bmessage = Buffer.from(message)
-
-        server.send(bmessage, 0, bmessage.length, HTTP_UDP_PORT, HTTP_UDP_HOST, (err) => {
-            if (err) throw err;
-        });
+        console.log('file:', file)
 
       } 
 
-    })
+      filecounter++;
+    });
   })}
 
 

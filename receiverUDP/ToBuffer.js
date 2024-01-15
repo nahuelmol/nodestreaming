@@ -1,7 +1,14 @@
 
 const BUFFERS = [] 
 
+var File = {
+	currentFile:'none'
+}
+
+var acumulatedBuffers;
 global.manyBuffers = 1
+
+const { WriteStreamingFile } = require('./FileWriting.js')
 
 const BufferReception = (data) => {
   return new Promise((resolve) => {
@@ -12,17 +19,26 @@ const BufferReception = (data) => {
   });
 };
 
-const ReceivedBuffers = async (Bff, buffersXfiles) => {
-	await BufferReception(Bff)
+const ReceivedBuffers = (Bff) => {
 
-	const acumulatedBuffers = Buffer.concat(BUFFERS)
+	var BufferID = Bff.readUInt16BE(0);
+  	var string_size = Bff.readUInt16BE(2);
+  	var filename = Bff.toString('utf-8', 4, 4 + string_size);
 
-	if(manyBuffers == buffersXfiles){
-		console.log('Complete Buffer: ')
-		console.log(acumulatedBuffers)
-	}
+	if(filename != File.currentFile){
 
-	manyBuffers++;
+		if(File.currentFile != 'none'){
+			WriteStreamingFile(acumulatedBuffers, filename);
+		}
+		File.currentFile = filename;
+	} 
+	
+  	var BufferData =  Bff.slice(5 + string_size);
+
+	BufferReception(BufferData)
+
+	acumulatedBuffers = Buffer.concat(BUFFERS)
+	//lo que antes era una lista ahora se unifica en un unico buffer
 } 
 
 module.exports = {

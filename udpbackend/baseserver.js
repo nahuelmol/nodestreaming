@@ -10,8 +10,6 @@ dotenv.config();
 
 const hlsDirectory = process.env.HLS_PATH; 
 
-var UDPpacket = {}
-
 var ADDRESS = process.env.UDP_SERVER_HOST
 var PORT = process.env.UDP_SERVER_PORT
 
