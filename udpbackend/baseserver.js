@@ -1,4 +1,5 @@
-
+//this is the starter file of the backend UDP
+//it looks for the FFmpeg/HLS protocol created
 const path = require('path');
 const fs = require('fs');
 const server = require('./udpserver.js')

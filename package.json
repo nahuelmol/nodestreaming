@@ -9,7 +9,8 @@
     "devTCP": "nodemon tcpserver/tcp_server.js",
     "testbuffer": "nodemon tests/BufferTests.js",
     "reditests":"node tests/reditests.js",
-    "devUDP": "nodemon udpbackend/baseserver.js"
+    "devUDP": "nodemon udpbackend/baseserver.js",
+    "test_crypt":"node tests/encr.js"
   },
   "keywords": [],
   "author": "",

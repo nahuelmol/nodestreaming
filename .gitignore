@@ -2,3 +2,9 @@
 /node_modules
 /tests
 /samples
+
+
+*.js~
+*.un~
+/receiverUDP/*.js~
+/receiverUDP/*.un~

@@ -1,3 +1,4 @@
+const { SetNameFile, GetNameFile } = require('../db/dbmethods');
 
 const BUFFERS = [] 
 
@@ -24,11 +25,23 @@ const ReceivedBuffers = (Bff) => {
 	var BufferID = Bff.readUInt16BE(0);
   	var string_size = Bff.readUInt16BE(2);
   	var filename = Bff.toString('utf-8', 4, 4 + string_size);
-
+	
 	if(filename != File.currentFile){
 
 		if(File.currentFile != 'none'){
-			WriteStreamingFile(acumulatedBuffers, filename);
+			GetNameFile(filename)
+				.then(res => {
+					if(!res){
+						SetNameFile();				
+						WriteStreamingFile(acumulatedBuffers, filename);
+
+					}
+				})
+				.then(()=> {
+					
+				})
+				.catch(err => console.log(err));
+
 		}
 		File.currentFile = filename;
 	} 
