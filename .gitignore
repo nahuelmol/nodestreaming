@@ -8,3 +8,4 @@
 *.un~
 /receiverUDP/*.js~
 /receiverUDP/*.un~
+/db/*.swp
