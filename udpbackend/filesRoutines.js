@@ -47,15 +47,15 @@ async function TakeFiles (dirpath) {
 
     if(m3u8files.length > 0 && tsfiles.length > 0) { 
       console.log('.m3u8 and .ts exists')
-      SendFiles(dirpath, ['.m3u6', '.ts']);
+      SendFiles(dirpath);
 
     } else if(txtfiles.length > 0) { 
       console.log('.m3u8 and .ts doesnt exists');
-      SendFiles(dirpath, ['.txt']);
+      SendFiles(dirpath);
     };
 }
 
-async function SendFiles (DIR_PATH, aimed_files) {
+async function SendFiles (DIR_PATHs) {
 
   const HTTP_UDP_HOST = process.env.HTTP_UDP_SERVER_HOST;
   const HTTP_UDP_PORT = process.env.HTTP_UDP_SERVER_PORT;
